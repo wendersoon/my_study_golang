@@ -8,4 +8,5 @@ import (
 func main() {
 	fmt.Println("Dentro da main.")
 	auxiliar.Escrever()
+
 }
