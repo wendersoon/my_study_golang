@@ -42,4 +42,47 @@ func main() {
 
 	w[4] = 5555 //Se eu mudar o valor da posição 4 no array, o slice que referência-o mudará
 	fmt.Println(slice2)
+
+	//Arrays Internos
+
+	fmt.Println("---------------------------")
+
+	slice5 := make([]float64, 2, 3)
+	fmt.Println(slice5)
+	fmt.Println(len(slice5))
+	fmt.Println(cap(slice5))
+
+	slice5 = append(slice5, 2)
+	fmt.Println(slice5)
+	fmt.Println(len(slice5))
+	fmt.Println(cap(slice5))
+
+	slice5 = append(slice5, 5) //Quando 'estoura' a capacidade, esta é dobrada de tamanho
+	fmt.Println(slice5)
+	fmt.Println(len(slice5))
+	fmt.Println(cap(slice5))
+
+	slice5 = append(slice5, 5)
+	slice5 = append(slice5, 5)
+	fmt.Println(slice5)
+	fmt.Println(len(slice5))
+	fmt.Println(cap(slice5))
+
+	slice5 = append(slice5, 10) //Cada vez que ultrapassa a capacidade, a capacidade máxima do array é dobrado
+	fmt.Println(slice5)
+	fmt.Println(len(slice5))
+	fmt.Println(cap(slice5))
+
+	//Testando diretamente sem usar o make
+	fmt.Println("Sem usar a função make que internamente é chamada na criação de um slice")
+	sliceX := []int{10, 10}
+	fmt.Println(sliceX)
+	fmt.Println(len(sliceX))
+	fmt.Println(cap(sliceX))
+
+	sliceX = append(sliceX, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10) //a capacidade do slicex é aumentada
+	fmt.Println(sliceX)
+	fmt.Println(len(sliceX))
+	fmt.Println(cap(sliceX))
+
 }
