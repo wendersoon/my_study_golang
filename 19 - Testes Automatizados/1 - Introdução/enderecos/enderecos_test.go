@@ -17,6 +17,7 @@ func TestTipoDeEndereco(t *testing.T) {
 		{"Estrada do arroz", "Estrada"},
 		{"rodovia perimetral", "Rodovia"},
 		{"RUA azul", "Rua"},
+		{"AAAAA AAA", "Tipo Inválido"},
 	}
 
 	for _, cenario := range cenarios {
