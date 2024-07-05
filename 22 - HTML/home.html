@@ -5,14 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teste</title>
+
+    <style>
+        
+
+        h2 {
+            color: black;
+            align-items: center;
+        }
+
+    </style>
 </head>
 
 <body>
     <h2>Página Principal</h2>
 
-    <marquee>
-        <h4>Seja bem vindo, {{ .Email }}!</h4>
-    </marquee>
+    <button id="botao">Clique em Mim!</button>
 
+
+    <script>
+        
+        var botao = document.getElementById("botao")
+
+        botao.onclick = function(){
+            alert("Hello World!")
+        }
+        
+    </script>
 </body>
 </html>
