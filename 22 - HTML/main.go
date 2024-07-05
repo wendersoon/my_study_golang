@@ -8,8 +8,16 @@ import (
 
 var templates *template.Template
 
+type usuario struct {
+	Nome  string
+	Email string
+}
+
 func home(w http.ResponseWriter, r *http.Request) {
-	templates.ExecuteTemplate(w, "home.html", nil)
+
+	u := usuario{"Wenderson", "Teste@gmail.com"}
+
+	templates.ExecuteTemplate(w, "home.html", u)
 }
 
 func main() {

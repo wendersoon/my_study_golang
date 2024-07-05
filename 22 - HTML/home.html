@@ -1,161 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo da Memória</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
-
-        .game-container {
-            display: grid;
-            grid-template-columns: repeat(4, 100px);
-            grid-gap: 10px;
-            perspective: 1000px;
-        }
-
-        .card {
-            width: 100px;
-            height: 100px;
-            position: relative;
-            transform-style: preserve-3d;
-            transform: rotateY(0deg);
-            transition: transform 0.6s;
-            cursor: pointer;
-        }
-
-        .card.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card .front,
-        .card .back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 5px;
-        }
-
-        .card .front {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
-        }
-
-        .card .back {
-            background-color: #007bff;
-            transform: rotateY(180deg);
-        }
-    </style>
+    <title>Teste</title>
 </head>
+
 <body>
-    <div class="game-container" id="gameContainer">
-        <!-- Cartas serão geradas aqui -->
-    </div>
+    <h2>Página Principal</h2>
 
-    <script>
-        const cardsArray = [
-            { name: 'A', img: 'A' },
-            { name: 'B', img: 'B' },
-            { name: 'C', img: 'C' },
-            { name: 'D', img: 'D' },
-            { name: 'E', img: 'E' },
-            { name: 'F', img: 'F' },
-            { name: 'G', img: 'G' },
-            { name: 'H', img: 'H' },
-        ];
+    <marquee>
+        <h4>Seja bem vindo, {{ .Email }}!</h4>
+    </marquee>
 
-        const gameContainer = document.getElementById('gameContainer');
-        let firstCard = null;
-        let secondCard = null;
-        let lockBoard = false;
-
-        // Duplica e embaralha as cartas
-        function shuffle(array) {
-            return array.concat(array).sort(() => 0.5 - Math.random());
-        }
-
-        // Cria a estrutura das cartas
-        function createCards() {
-            const shuffledCards = shuffle(cardsArray);
-
-            shuffledCards.forEach(card => {
-                const cardElement = document.createElement('div');
-                cardElement.classList.add('card');
-                cardElement.dataset.name = card.name;
-
-                cardElement.innerHTML = `
-                    <div class="front"></div>
-                    <div class="back">${card.img}</div>
-                `;
-
-                cardElement.addEventListener('click', flipCard);
-                gameContainer.appendChild(cardElement);
-            });
-        }
-
-        // Vira a carta
-        function flipCard() {
-            if (lockBoard) return;
-            if (this === firstCard) return;
-
-            this.classList.add('flipped');
-
-            if (!firstCard) {
-                firstCard = this;
-                return;
-            }
-
-            secondCard = this;
-            lockBoard = true;
-
-            checkForMatch();
-        }
-
-        // Verifica se há uma correspondência
-        function checkForMatch() {
-            const isMatch = firstCard.dataset.name === secondCard.dataset.name;
-
-            isMatch ? disableCards() : unflipCards();
-        }
-
-        // Desabilita as cartas em caso de correspondência
-        function disableCards() {
-            firstCard.removeEventListener('click', flipCard);
-            secondCard.removeEventListener('click', flipCard);
-
-            resetBoard();
-        }
-
-        // Desvira as cartas em caso de não correspondência
-        function unflipCards() {
-            setTimeout(() => {
-                firstCard.classList.remove('flipped');
-                secondCard.classList.remove('flipped');
-
-                resetBoard();
-            }, 1000);
-        }
-
-        // Reseta as variáveis do tabuleiro
-        function resetBoard() {
-            [firstCard, secondCard] = [null, null];
-            lockBoard = false;
-        }
-
-        // Inicializa o jogo
-        createCards();
-    </script>
 </body>
 </html>
