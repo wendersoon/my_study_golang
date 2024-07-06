@@ -63,3 +63,48 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(fmt.Sprintf("Usuário inserido com sucesso! ID: %d", idInserido)))
 }
+
+// BuscarUsuarios retorna uma lista de todos os usuários
+func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
+	db, err := banco.Conectar()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao conectar com banco de dados!"))
+		return
+	}
+	defer db.Close()
+
+	linhas, err := db.Query("select * from usuarios")
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		w.Write([]byte("Erro ao buscar usuários!"))
+		return
+	}
+	defer linhas.Close()
+
+	var usuarios []usuario
+
+	for linhas.Next() {
+		var usuario usuario
+
+		if err := linhas.Scan(&usuario.ID, &usuario.Nome, &usuario.Email); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Erro ao escanear banco de dados!"))
+			return
+		}
+		usuarios = append(usuarios, usuario)
+
+	}
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(usuarios); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao retornar json com a lista de usuários!"))
+		return
+	}
+
+}
+
+// BuscarUsuario retorna apenas um usuário
+func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
+
+}
