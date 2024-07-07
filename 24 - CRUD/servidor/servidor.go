@@ -147,3 +147,89 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// AtualizaUsario edita as informações de usuários
+func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+
+	ID, err := strconv.ParseUint(parametros["id"], 10, 32)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao converter o parâmetro para inteiro."))
+		return
+	}
+
+	corpoDaRequisicao, err := io.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao ler corpo da requisição!"))
+		return
+	}
+
+	var usuario usuario
+	if err := json.Unmarshal(corpoDaRequisicao, &usuario); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao converter usuário para struct!"))
+		return
+	}
+
+	db, err := banco.Conectar()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao conectar com o banco de dados!"))
+		return
+	}
+	defer db.Close()
+
+	statement, err := db.Prepare("update usuarios set nome=?, email=? where id = ?")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao criar statement!"))
+		return
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(usuario.Nome, usuario.Email, ID); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao atualizar o usuário!"))
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// DeletarUsuario deleta os usuarios do banco de dados
+func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+
+	ID, err := strconv.ParseUint(parametros["id"], 10, 32)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao converter o parametro para inteiro"))
+		return
+	}
+
+	db, err := banco.Conectar()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao conectar com o banco de dados!"))
+		return
+	}
+	defer db.Close()
+
+	statement, err := db.Prepare("delete from usuarios where id = ?")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao criar o statement!"))
+		return
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(ID); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao deletar usuário!"))
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
