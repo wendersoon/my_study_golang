@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type usuario struct {
@@ -106,5 +109,41 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 
 // BuscarUsuario retorna apenas um usuário
 func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
+	parameters := mux.Vars(r)
 
+	id, err := strconv.ParseInt(parameters["id"], 10, 32)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao converter o parâmetro para inteiro"))
+	}
+
+	db, err := banco.Conectar()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Erro ao conectar com banco!"))
+		return
+	}
+	defer db.Close()
+
+	linha, err := db.Query("select * from usuarios where id = ?", id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Erro ao buscar o usuário!"))
+		return
+	}
+	defer linha.Close()
+
+	var usuario usuario
+	if linha.Next() {
+		if err := linha.Scan(&usuario.ID, &usuario.Nome, &usuario.Email); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Erro ao escanear o usuário!"))
+		}
+	}
+
+	if err := json.NewEncoder(w).Encode(usuario); err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		w.Write([]byte("Erro ao retornar json!"))
+		return
+	}
 }
